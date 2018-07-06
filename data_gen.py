@@ -22,3 +22,10 @@ def split_data():
                     (PATH/TEST/cls_name).mkdir(parents=True)
                 img_path.replace((PATH/TEST/cls_name/img))
                 test_size += 1
+
+
+def delete_duplicate():
+    for dir in os.listdir():
+        for img in os.listdir(dir):
+            if int(img.split('.')[0]) > 80:
+                osremove(dir + '/' + img)
