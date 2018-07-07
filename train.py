@@ -38,9 +38,7 @@ def train(args):
         width_shift_range=0.2,
         height_shift_range=0.2,
         shear_range=0.2,
-        zoom_range=0.2,
-        horizontal_flip=True,
-        vertical_flip=True
+        zoom_range=0.2
     )
 
     test_datagen = ImageDataGenerator(
@@ -49,9 +47,7 @@ def train(args):
         width_shift_range=0.2,
         height_shift_range=0.2,
         shear_range=0.2,
-        zoom_range=0.2,
-        horizontal_flip=True,
-        vertical_flip=True
+        zoom_range=0.2
     )
 
     train_generator = train_datagen.flow_from_directory(
