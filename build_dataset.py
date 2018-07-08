@@ -2,14 +2,14 @@ import argparse
 import random
 import os
 
-import PIL import Image
+from PIL import Image
 from tqdm import tqdm
 
 SIZE = 224 # for ResNet50
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--data_dir', default='data/currency', help='Directory with the currency dataset')
-parser.add_argument('--output_dir', default='data/224x224_currency', help='where to write the new dataset')
+parser.add_argument('--data_dir', default='../data/dataset', help='Directory with the currency dataset')
+parser.add_argument('--output_dir', default='../data/224x224_currency', help='where to write the new dataset')
 
 
 def resize_and_save(filename, output_dir, size=SIZE):
@@ -30,8 +30,8 @@ if __name__ == '__main__':
     test_data_dir = os.path.join(args.data_dir, 'test_dir')
 
     # Get the filenames in dataset directory
-    filenames = os.listdir(train_data_dir)
-    filenames = [os.path.join(train_data_dir, f) for f in filenames if f.endswith('.jpg')]
+    filenames = os.listdir(args.data_dir)
+    filenames = [os.path.join(args.data_dir, f) for f in filenames if f.endswith('.jpg')]
 
     # split the images in 'currenct' into 80% train, 10% dev 10% test
     # make sure to always shuffle with a fixed seed so that spllit is reproducible
@@ -49,7 +49,7 @@ if __name__ == '__main__':
                  'dev': dev_filenames,
                  'test': test_filenames}
 
-    if not os.path.exits(args.output_dir):
+    if not os.path.exists(args.output_dir):
         os.mkdir(args.output_dir)
     else:
         print('Warning: output dir {} already exists'.format(args.output_dir))
@@ -58,7 +58,7 @@ if __name__ == '__main__':
     for split in ['train', 'dev', 'test']:
         output_dir_split = os.path.join(args.output_dir, '{}_dir'.format(split))
         if not os.path.exists(output_dir_split):
-            os..mkdir(output_dir_spit)
+            os.mkdir(output_dir_split)
         else:
             print('Warning: dir {} already exits'.format(output_dir_split))
 
