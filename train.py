@@ -50,6 +50,21 @@ def setup_to_transfer_learn(model, base_model):
         layer.trainable = False
     model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
 
+
+def setup_to_finetune(model):
+    """Freeze the bottom NB_IV3_LAYERS and retrain the remaining top layers.
+
+    note: NB_IV3_LAYERS corresponds to the top2 inception blocks in the inceptionv3 arch
+
+    Args:
+        model: keras model
+    """
+    for layer in model.layers[:NB_IV3_LAYERS_TO_FREEZE]:
+        layer.trainable = False
+    for layer in model.layers[NB_IV3_LAYERS_TO_FREEZE:]:
+        layer.trainable = True
+    model.compile(optimizer=SGD(lr=0.0001, momentum -0.9), loss='categorical_crossentropy', metrics=['accuracy'])
+
 def plot_training(h):
     acc = h.history['acc']
     val_acc = h.history['val_acc']
@@ -129,10 +144,21 @@ def train(args):
         nb_val_samples=nb_val_samples,
         class_weight='auto')
 
+    # fine-tuning
+    setup_to_finetune(model)
+
+    history_ft = model.fit_generator(
+        train_generator,
+        nb_epoch=nb_epoch,
+        samples_per_epoch=nb_train_samples,
+        validation_data=validation_generator,
+        nb_val_samples=nb_val_samples,
+        class_weight='auto')
+
     model.save(args.output_model_file)
 
     if args.plot:
-        plot_training(history_tl)
+        plot_training(history_ft)
 
 if __name__ == '__main__':
     a = argparse.ArgumentParser()
