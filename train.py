@@ -2,21 +2,34 @@ import os
 import sys
 import glob
 import argparse
+import logging
+import datetime
 
-from keras import __version__
-from resnet50 import ResNet50
-from keras.applications.resnet50 import preprocess_input
-from keras.models import Model
-from keras.layers import Dense, GlobalAveragePooling2D, Dropout
-from keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras import __version__
+from tensorflow.keras.applications.resnet50 import ResNet50, preprocess_input
+from tensorflow.keras.models import Model
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, Dropout
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import matplotlib.pyplot as plt
 
+# setting up logging
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+file_handler = logging.FileHandler('./logs/train.log')
+logger.addHandler(file_handler)
+
+
+logging.info("=================================================================")
+logging.info(datetime.datetime.now().ctime())
 
 IM_WIDTH, IM_HEIGHT = 224, 224  # fixed size for ResNet50
-NB_EPOCHS = 3
+LR = 0.001
+NB_EPOCHS = 5
 BATCH_SIZE = 32
 FC_SIZE = 1024
-IV3_LAYERS_TO_FREEZE = 172
+NB_RN50_LAYERS_TO_FREEZE = 172
+base_model = ResNet50
 
 def get_nb_files(directory):
     """Get number of files by searching directory recursively"""
@@ -29,7 +42,7 @@ def get_nb_files(directory):
 
 def add_new_last_layer(base_model, nb_classes):
     """Add last layer to the convnet
-    Args:
+    Args:Optional array of the same length as x, containing weights to ap
         base_model: keras model excluding top
         nb_classes: # of classes
 
@@ -41,14 +54,14 @@ def add_new_last_layer(base_model, nb_classes):
     x = Dense(FC_SIZE, activation='relu')(x)  #new FC layer, random init
     x = x = Dropout(0.5)(x)
     predictions = Dense(nb_classes, activation='softmax')(x)
-    model = Model(input=base_model.input, output=predictions)
+    model = Model(inputs=base_model.input, outputs=predictions)
     return model
 
 def setup_to_transfer_learn(model, base_model):
     """Freeze all layers and compile the model"""
     for layer in base_model.layers:
         layer.trainable = False
-    model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
+    model.compile(optimizer=Adam(lr=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
 
 
 def setup_to_finetune(model):
@@ -59,11 +72,11 @@ def setup_to_finetune(model):
     Args:
         model: keras model
     """
-    for layer in model.layers[:NB_IV3_LAYERS_TO_FREEZE]:
+    for layer in model.layers[:NB_RN50_LAYERS_TO_FREEZE]:
         layer.trainable = False
-    for layer in model.layers[NB_IV3_LAYERS_TO_FREEZE:]:
+    for layer in model.layers[NB_RN50_LAYERS_TO_FREEZE:]:
         layer.trainable = True
-    model.compile(optimizer=SGD(lr=0.0001, momentum -0.9), loss='categorical_crossentropy', metrics=['accuracy'])
+    model.compile(optimizer=Adam(lr=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
 
 def plot_training(h):
     acc = h.history['acc']
@@ -71,6 +84,9 @@ def plot_training(h):
     loss = h.history['loss']
     val_loss = h.history['val_loss']
     epochs = range(len(acc))
+    print(val_acc)
+    print(acc)
+    print(loss, val_loss)
 
     plt.plot(epochs, acc, 'r.')
     plt.plot(epochs, val_acc, 'r-')
@@ -79,8 +95,8 @@ def plot_training(h):
     plt.grid(True)
     plt.legend(['Train', 'Val'])
     plt.title('Training Vs validation accuracy')
+    plt.show()
 
-    plt.figure()
     plt.plot(epochs, loss, 'r.')
     plt.plot(epochs, val_loss, 'r-')
     plt.xlabel('num of epochs')
@@ -91,6 +107,15 @@ def plot_training(h):
     plt.show()
 
 def train(args):
+    
+    # logging hyperparameters
+    logging.info("HYPERPARAMETERS:")
+    logging.info("model =ResNet50")
+    logging.info("learning-rate ={}".format(args.lr))
+    logging.info("nb_epoches ={}".format(args.nb_epoch))
+    logging.info("batch-size ={}".format(args.batch_size))
+    logging.info("nb-layer-to-freeze ={}".format(args.nb_layer_to_freeze))
+
     """Use transfer learning and fine-tuning to train a network on a new dataset"""
     nb_train_samples = get_nb_files(args.train_dir) - (222-50)  # samples=150
     nb_classes = len(glob.glob(args.train_dir + '/*'))
@@ -138,10 +163,8 @@ def train(args):
 
     history_tl = model.fit_generator(
         train_generator,
-        nb_epoch=nb_epoch,
-        samples_per_epoch=nb_train_samples,
+        epochs=args.nb_epoch,
         validation_data=validation_generator,
-        nb_val_samples=nb_val_samples,
         class_weight='auto')
 
     # fine-tuning
@@ -149,23 +172,23 @@ def train(args):
 
     history_ft = model.fit_generator(
         train_generator,
-        nb_epoch=nb_epoch,
-        samples_per_epoch=nb_train_samples,
+        epochs=args.nb_epoch,
         validation_data=validation_generator,
-        nb_val_samples=nb_val_samples,
         class_weight='auto')
 
     model.save(args.output_model_file)
 
     if args.plot:
-        plot_training(history_ft)
+        plot_training(history_tl)
 
 if __name__ == '__main__':
     a = argparse.ArgumentParser()
     a.add_argument('--train_dir')
     a.add_argument('--val_dir')
-    a.add_argument('--nb_epoch', default=NB_EPOCHS)
-    a.add_argument('--batch_size', default=BATCH_SIZE)
+    a.add_argument('--lr', type=int, default=LR)
+    a.add_argument('--nb_epoch', type=int, default=NB_EPOCHS)
+    a.add_argument('--batch_size', type=int, default=BATCH_SIZE)
+    a.add_argument('--nb_layer_to_freeze', type=int, default=NB_RN50_LAYERS_TO_FREEZE)
     a.add_argument('--output_model_file', default='inceptionv3-ft.model')
     a.add_argument('--plot', action='store_true')
 
