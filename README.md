@@ -21,7 +21,8 @@ python train.py \
 --nb_epoch=3 \
 --batch_size=32 \
 --batch_size=32 \
---output_model_file=inceptionv3-tl.model
+--output_model_file=resnet50-tf-l5.h5 \
+--nb_layer_to_freeze=5
 ```
 
 ## Project sturcture based on [CS230 Deep Learning](https://cs230-stanford.github.io/project-code-examples.html)
