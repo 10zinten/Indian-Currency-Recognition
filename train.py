@@ -4,6 +4,7 @@ import glob
 import argparse
 import logging
 import datetime
+import pandas as pd
 
 from tensorflow.keras import __version__
 from tensorflow.keras.applications.resnet50 import ResNet50, preprocess_input
@@ -27,8 +28,7 @@ IM_WIDTH, IM_HEIGHT = 224, 224  # fixed size for ResNet50
 LR = 0.001
 NB_EPOCHS = 5
 BATCH_SIZE = 32
-FC_SIZE = 1024
-NB_RN50_LAYERS_TO_FREEZE = 172
+NB_RN50_LAYERS_TO_FREEZE = 10
 base_model = ResNet50
 
 def get_nb_files(directory):
@@ -47,24 +47,18 @@ def add_new_last_layer(base_model, nb_classes):
         nb_classes: # of classes
 
     Returns:
-        model: keras model with custom out layer
+        model: ker[names[i]as model with custom out layer
     """
     x = base_model.output
     x = GlobalAveragePooling2D()(x)
-    x = Dense(FC_SIZE, activation='relu')(x)  #new FC layer, random init
+    x = Dense(512, activation='relu', name='fc-1')(x)
     x = x = Dropout(0.5)(x)
-    predictions = Dense(nb_classes, activation='softmax')(x)
+    x = Dense(256, activation='relu', name='fc-2')(x)
+    predictions = Dense(nb_classes, activation='softmax', name='output_layer')(x)
     model = Model(inputs=base_model.input, outputs=predictions)
     return model
 
-def setup_to_transfer_learn(model, base_model):
-    """Freeze all layers and compile the model"""
-    for layer in base_model.layers:
-        layer.trainable = False
-    model.compile(optimizer=Adam(lr=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
-
-
-def setup_to_finetune(model):
+def setup_to_finetune(model, args):
     """Freeze the bottom NB_IV3_LAYERS and retrain the remaining top layers.
 
     note: NB_IV3_LAYERS corresponds to the top2 inception blocks in the inceptionv3 arch
@@ -72,10 +66,10 @@ def setup_to_finetune(model):
     Args:
         model: keras model
     """
-    for layer in model.layers[:NB_RN50_LAYERS_TO_FREEZE]:
+
+    for layer in model.layers[:-args.nb_layer_to_freeze]:
         layer.trainable = False
-    for layer in model.layers[NB_RN50_LAYERS_TO_FREEZE:]:
-        layer.trainable = True
+    print(model.layers[-1].trainable)
     model.compile(optimizer=Adam(lr=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
 
 def plot_training(h):
@@ -105,6 +99,21 @@ def plot_training(h):
     plt.legend(['Train', 'Val'])
     plt.title('Training Vs Validation loss')
     plt.show()
+
+def metrics_logging(his):
+    loss = his.history['loss']
+    val_loss = his.history['val_acc']
+    acc = his.history['acc']
+    val_acc = his.history['val_acc']
+    
+    metrics = []
+    for i in range(len(loss)):
+        metrics.append([loss[i], val_loss[i], acc[i], val_acc[i]])
+    df = pd.DataFrame(metrics, columns=['train loss', 'va_loss', 'train_acc', 'val_acc'])
+    
+    logging.info("")
+    logging.info("Training Summary:")
+    logging.info(df.to_string(index=False))
 
 def train(args):
     
@@ -158,19 +167,10 @@ def train(args):
     base_model = ResNet50(weights='imagenet', include_top=False) # Excludes final FC layer
     model = add_new_last_layer(base_model, nb_classes)
 
-    # transfer learning
-    setup_to_transfer_learn(model, base_model)
-
-    history_tl = model.fit_generator(
-        train_generator,
-        epochs=args.nb_epoch,
-        validation_data=validation_generator,
-        class_weight='auto')
-
     # fine-tuning
-    setup_to_finetune(model)
+    setup_to_finetune(model, args)
 
-    history_ft = model.fit_generator(
+    history = model.fit_generator(
         train_generator,
         epochs=args.nb_epoch,
         validation_data=validation_generator,
@@ -178,8 +178,10 @@ def train(args):
 
     model.save(args.output_model_file)
 
+    metrics_logging(history)
+
     if args.plot:
-        plot_training(history_tl)
+        plot_training(history)
 
 if __name__ == '__main__':
     a = argparse.ArgumentParser()
@@ -189,7 +191,7 @@ if __name__ == '__main__':
     a.add_argument('--nb_epoch', type=int, default=NB_EPOCHS)
     a.add_argument('--batch_size', type=int, default=BATCH_SIZE)
     a.add_argument('--nb_layer_to_freeze', type=int, default=NB_RN50_LAYERS_TO_FREEZE)
-    a.add_argument('--output_model_file', default='inceptionv3-ft.model')
+    a.add_argument('--output_model_file', default='ResNet50-ft-10.model')
     a.add_argument('--plot', action='store_true')
 
     args = a.parse_args()
