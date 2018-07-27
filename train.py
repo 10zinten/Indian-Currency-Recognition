@@ -21,8 +21,8 @@ file_handler = logging.FileHandler('./logs/train.log')
 logger.addHandler(file_handler)
 
 
-logging.info("=================================================================")
-logging.info(datetime.datetime.now().ctime())
+logging.info("\n=================================================================")
+logging.info("Train start time: {}".format(datetime.datetime.now().ctime()))
 
 IM_WIDTH, IM_HEIGHT = 224, 224  # fixed size for ResNet50
 LR = 0.001
@@ -179,6 +179,8 @@ def train(args):
     model.save(args.output_model_file)
 
     metrics_logging(history)
+
+    logging.info("Train finish time: {}".format(datetime.datetime.now().ctime()))
 
     if args.plot:
         plot_training(history)
