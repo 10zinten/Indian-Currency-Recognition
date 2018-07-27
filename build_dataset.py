@@ -5,7 +5,7 @@ import os
 from PIL import Image
 from tqdm import tqdm
 
-SIZE = 224 # for ResNet50
+SIZE = 64
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_dir', default='../data/dataset', help='Directory with the currency dataset')
