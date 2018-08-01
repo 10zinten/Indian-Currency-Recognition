@@ -1,6 +1,3 @@
-model_checkpoint_path: "after-epoch-10"
-all_model_checkpoint_paths: "after-epoch-6"
-all_model_checkpoint_paths: "after-epoch-7"
-all_model_checkpoint_paths: "after-epoch-8"
-all_model_checkpoint_paths: "after-epoch-9"
-all_model_checkpoint_paths: "after-epoch-10"
+version https://git-lfs.github.com/spec/v1
+oid sha256:056c4da40e20ff6950f042dbf9d081d9fe972d96dce2e6c2c14b3b694552c051
+size 261

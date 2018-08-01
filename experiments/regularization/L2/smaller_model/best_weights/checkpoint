@@ -1,2 +1,3 @@
-model_checkpoint_path: "after-epoch-9"
-all_model_checkpoint_paths: "after-epoch-9"
+version https://git-lfs.github.com/spec/v1
+oid sha256:56bf3a249d3c547d69b96d167448a0870f80ed8d403b3a51984b3a045d63afbd
+size 83

@@ -1,5 +1,3 @@
-2018-07-30 17:02:38,951:INFO: Creating the dataset...
-2018-07-30 17:02:38,973:INFO: Creating the model...
-2018-07-30 17:02:40,783:INFO: Starting evaluation
-2018-07-30 17:02:40,889:INFO: Restoring parameters from experiments/regularization/L2/more_features/best_weights/after-epoch-9
-2018-07-30 17:02:41,987:INFO: - Eval metrics: accuracy: 0.789 ; loss: 0.670
+version https://git-lfs.github.com/spec/v1
+oid sha256:a9dbf809159ef67decb62c59bc5cc979d9e8db60811706cfc320906f54d3386f
+size 1077
