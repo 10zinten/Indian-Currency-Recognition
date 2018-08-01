@@ -5,7 +5,7 @@ import os
 from PIL import Image
 from tqdm import tqdm
 
-SIZE = 64
+SIZE = 128
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_dir', default='../data/dataset', help='Directory with the currency dataset')
