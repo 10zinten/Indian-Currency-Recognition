@@ -1,0 +1,41 @@
+2018-07-30 17:09:15,232:INFO: Creating the datasets...
+2018-07-30 17:09:15,311:INFO: Creating the model...
+2018-07-30 17:09:17,740:INFO: Starting training for 10 epoch(s)
+2018-07-30 17:09:18,653:INFO: Epoch 1/10
+2018-07-30 17:09:58,826:INFO: - Train metrics: accuracy: 0.431 ; loss: 1.491
+2018-07-30 17:10:00,064:INFO: - Eval metrics: accuracy: 0.365 ; loss: 1.558
+2018-07-30 17:10:00,206:INFO: - Found new best accuracy, saving in experiments/regularization/L2/smaller_model/best_weights/after-epoch-1
+2018-07-30 17:10:00,206:INFO: Epoch 2/10
+2018-07-30 17:10:36,131:INFO: - Train metrics: accuracy: 0.614 ; loss: 1.006
+2018-07-30 17:10:37,234:INFO: - Eval metrics: accuracy: 0.365 ; loss: 1.765
+2018-07-30 17:10:37,345:INFO: - Found new best accuracy, saving in experiments/regularization/L2/smaller_model/best_weights/after-epoch-2
+2018-07-30 17:10:37,349:INFO: Epoch 3/10
+2018-07-30 17:11:13,475:INFO: - Train metrics: accuracy: 0.726 ; loss: 0.792
+2018-07-30 17:11:14,627:INFO: - Eval metrics: accuracy: 0.485 ; loss: 1.502
+2018-07-30 17:11:14,744:INFO: - Found new best accuracy, saving in experiments/regularization/L2/smaller_model/best_weights/after-epoch-3
+2018-07-30 17:11:14,749:INFO: Epoch 4/10
+2018-07-30 17:11:50,981:INFO: - Train metrics: accuracy: 0.764 ; loss: 0.647
+2018-07-30 17:11:52,081:INFO: - Eval metrics: accuracy: 0.585 ; loss: 1.073
+2018-07-30 17:11:52,192:INFO: - Found new best accuracy, saving in experiments/regularization/L2/smaller_model/best_weights/after-epoch-4
+2018-07-30 17:11:52,196:INFO: Epoch 5/10
+2018-07-30 17:12:28,329:INFO: - Train metrics: accuracy: 0.829 ; loss: 0.501
+2018-07-30 17:12:29,448:INFO: - Eval metrics: accuracy: 0.676 ; loss: 0.915
+2018-07-30 17:12:29,566:INFO: - Found new best accuracy, saving in experiments/regularization/L2/smaller_model/best_weights/after-epoch-5
+2018-07-30 17:12:29,570:INFO: Epoch 6/10
+2018-07-30 17:13:05,613:INFO: - Train metrics: accuracy: 0.876 ; loss: 0.414
+2018-07-30 17:13:06,726:INFO: - Eval metrics: accuracy: 0.676 ; loss: 0.897
+2018-07-30 17:13:06,835:INFO: - Found new best accuracy, saving in experiments/regularization/L2/smaller_model/best_weights/after-epoch-6
+2018-07-30 17:13:06,839:INFO: Epoch 7/10
+2018-07-30 17:13:42,764:INFO: - Train metrics: accuracy: 0.897 ; loss: 0.328
+2018-07-30 17:13:43,943:INFO: - Eval metrics: accuracy: 0.714 ; loss: 0.698
+2018-07-30 17:13:44,089:INFO: - Found new best accuracy, saving in experiments/regularization/L2/smaller_model/best_weights/after-epoch-7
+2018-07-30 17:13:44,093:INFO: Epoch 8/10
+2018-07-30 17:14:20,000:INFO: - Train metrics: accuracy: 0.922 ; loss: 0.271
+2018-07-30 17:14:21,110:INFO: - Eval metrics: accuracy: 0.680 ; loss: 0.869
+2018-07-30 17:14:21,110:INFO: Epoch 9/10
+2018-07-30 17:14:57,153:INFO: - Train metrics: accuracy: 0.943 ; loss: 0.206
+2018-07-30 17:14:58,286:INFO: - Eval metrics: accuracy: 0.763 ; loss: 0.692
+2018-07-30 17:14:58,411:INFO: - Found new best accuracy, saving in experiments/regularization/L2/smaller_model/best_weights/after-epoch-9
+2018-07-30 17:14:58,415:INFO: Epoch 10/10
+2018-07-30 17:15:34,711:INFO: - Train metrics: accuracy: 0.956 ; loss: 0.164
+2018-07-30 17:15:35,833:INFO: - Eval metrics: accuracy: 0.759 ; loss: 0.685

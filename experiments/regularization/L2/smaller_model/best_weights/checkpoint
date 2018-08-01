@@ -1,0 +1,2 @@
+model_checkpoint_path: "after-epoch-9"
+all_model_checkpoint_paths: "after-epoch-9"
