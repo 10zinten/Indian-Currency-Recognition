@@ -1,7 +1,8 @@
 **/__pycache__
 **/migrations
-**/.ipunb_checlpoints
+**/.ipunb_checkpoints
 **/train_summaries
+**.sqlite3
 media_cdn/
 data/
 env/
