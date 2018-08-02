@@ -24,7 +24,7 @@ def inference(model_dir, image):
     json_path = os.path.join(model_dir, 'params.json')
     params = Params(json_path)
 
-    image_string = tf.read_file(args.image)
+    image_string = tf.read_file(image)
     image_decoded = tf.image.decode_jpeg(image_string, channels=3)
     image = tf.image.convert_image_dtype(image_decoded, tf.float32)
     resized_image = tf.image.resize_images(image, [params.image_size, params.image_size])
