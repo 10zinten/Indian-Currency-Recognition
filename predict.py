@@ -5,58 +5,8 @@ import random
 import numpy as np
 import tensorflow as tf
 
-from .model.utils import Params
-from .model.model_fn import build_model
-
-def inference(model_dir, image):
-    '''Do inference on a single image and return the label and prob dist.
-
-    Args:
-        model_dir(str): directory where all the checkpoint are stored
-        iamge(str): image filename
-
-    Return:
-        lable(np.array [1x1]): index of the class Eg: [[0]]
-        prods(np.array [1x6]): probability distriction of the classes
-    '''
-
-
-    json_path = os.path.join(model_dir, 'params.json')
-    params = Params(json_path)
-
-    image_string = tf.read_file(image)
-    image_decoded = tf.image.decode_jpeg(image_string, channels=3)
-    image = tf.image.convert_image_dtype(image_decoded, tf.float32)
-    resized_image = tf.image.resize_images(image, [params.image_size, params.image_size])
-    image = tf.clip_by_value(resized_image, 0.0, 0.1)
-    image = tf.expand_dims(image, 0)
-
-    inputs = {"images": image}
-
-    with tf.variable_scope('model'):
-        logits = build_model(True, inputs, params) # logits shape: (1, 6)
-   
-    predictions = tf.argmax(logits, 1)             # min max in col=1
-    probs = tf.nn.softmax(logits=logits)
-
-    saver = tf.train.Saver()
-
-    with tf.Session() as sess:
-        # Initialize the lookup table
-        sess.run(tf.global_variables_initializer())
-        
-        # Reload weights from the weights subdirectory
-        save_path = os.path.join(model_dir, 'best_weights')
-        if os.path.isdir(save_path):
-            print("Best weight found")
-            save_path = tf.train.latest_checkpoint(save_path)
-        saver.restore(sess, save_path)
-        
-        # Get predicted labels and probs distribution
-        pred, probs = sess.run([predictions, probs])
-
-    return pred, probs
-
+from model.utils import Params
+from model.model_fn import build_model
 
 if __name__ == "__main__":
     
@@ -87,7 +37,7 @@ if __name__ == "__main__":
     
     # Building model
     with tf.variable_scope('model'):
-        logits = build_model(True, inputs, params) # logits shape: (1, 6)
+        logits = build_model(False, inputs, params) # logits shape: (1, 6)
    
     predictions = tf.argmax(logits, 1)             # min max in col=1
     probs = tf.nn.softmax(logits=logits)            
@@ -118,4 +68,4 @@ if __name__ == "__main__":
         # Get predicted labels and probs distribution
         pred, probs = sess.run([predictions, probs])
 
-    print(pred, np.sum(probs))
+    print(pred, probs)
