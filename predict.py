@@ -112,7 +112,6 @@ if __name__ == "__main__":
         # Reload weights from the weights subdirectory
         save_path = os.path.join(args.model_dir, args.restore_from)
         if os.path.isdir(save_path):
-            print("Best weight found")
             save_path = tf.train.latest_checkpoint(save_path)
         saver.restore(sess, save_path)
         
